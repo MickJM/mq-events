@@ -1,0 +1,74 @@
+logging:
+  level:
+    org:
+      springframework: OFF
+    maersk:
+      com: DEBUG
+application:
+  save:
+    metrics:
+     required: false
+     filename: c:\Users\mickm\eclipse-workspace\mq-metrics\mq-metrics\mySavedMetrics.json
+spring:
+  main:
+    banner-mode: CONSOLE
+  banner:
+    location: banner.txt            
+ibm:
+  mq:
+    multiInstance: false
+    queueManager: QMAP03
+    channel: MQ.MONITOR.SVRCONN
+    connName: localhost(1444)
+    sslCipherSpec: TLS_RSA_WITH_AES_256_CBC_SHA256
+    sslCipherSpec1: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+    useSSL: false
+    user: MQmon01
+    password: Passw0rdPassw0rd1234
+    local: false
+    keepMetricsWhenQueueManagerIsDown: false
+    clearMetrics: 5
+    ccdtFile1: C:\ProgramData\IBM\MQ\qmgrs\QMAP03\@ipcc\AMQCLCHL.TAB    
+    json:
+      sort: true
+      order: ascending
+    objects:
+      queues:
+        include: "*"
+        exclude: SYSTEM.,AMQ.,DUMMY,ERROR.HANDLER
+      channels:
+        include: "*"
+        exclude: SYSTEM.,ADMIN.TLS.SVRCONN
+      listeners:
+        include: "*"
+        exclude: SYSTEM.
+        types:
+          include: TCP
+          exclude: "*"         
+    event:
+      delayInMilliSeconds: 10000      
+    security:
+      truststore: C:\ProgramData\IBM\MQ\qmgrs\QMAP01\ssl\qmap01jks.jks
+      truststore-password: Passw0rd
+      keystore: C:\ProgramData\IBM\MQ\qmgrs\QMAP01\ssl\qmap01jks.jks
+      keystore-password: Passw0rd
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus, metrics      
+  endpoint:
+    health:
+      show-details: always        
+  security:
+    enabled: false
+info:
+  app:
+    name: MQ-Metrics
+    description: IBM MQ Metrics
+    version: 1.0.0.12
+    java:
+      version: 1.8.0.0
+server:
+  port:
+    8093

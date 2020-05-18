@@ -1,0 +1,73 @@
+logging:
+  level:
+    org:
+      springframework: YES
+    maersk:
+      com: TRACE
+spring:
+  main:
+    banner-mode: CONSOLE
+  banner:
+    location: banner.txt
+  security:
+    user:
+      name: monitor
+      password: monitor123            
+ibm:
+  mq:
+    multiInstance: false
+    queueManager: QMAP01
+    channel: ADMIN.TLS.SVRCONN
+    connName: localhost(1501)
+    sslCipherSpec: TLS_RSA_WITH_AES_256_CBC_SHA256
+    sslCipherSpec1: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+    useSSL: true
+    user: MQmon01
+    password: Passw0rdPassw0rd1234
+    authenricateUsingCSP: true
+    local: false
+    keepMetricsWhenQueueManagerIsDown: false
+    clearMetrics: 5
+    json:
+      sort: true
+      order: ascending
+    objects:
+      queues:
+        include: DEAD.LETTER.QUEUE, SYSTEM.ADMIN.COMMAND.QUEUE, SYSTEM.ADMIN.STATISTICS.QUEUE, SYSTEM.ADMIN.ACCOUNTING.QUEUE, "*"
+        exclude: SYSTEM.,AMQ.,DUMMY,ERROR.HANDLER
+      channels:
+        include: "*"
+        exclude: SYSTEM.
+      listeners:
+        include: "*"
+        exclude: SYSTEM.
+        types:
+          include: TCP
+          exclude: "*"         
+    event:
+      delayInMilliSeconds: 10000      
+    security:
+      truststore: C:\ProgramData\IBM\MQ\qmgrs\QMAP01\ssl\qmap01jks.jks
+      truststore-password: Passw0rd
+      keystore: C:\ProgramData\IBM\MQ\qmgrs\QMAP01\ssl\qmap01jks.jks
+      keystore-password: Passw0rd
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus, metrics      
+  endpoint:
+    health:
+      show-details: always        
+  security:
+    enabled: false
+info:
+  app:
+    name: mq-events-1.0.0.0
+    description: IBM MQ Events
+    version: 1.0.0.0
+    java:
+      version: 1.8.0.0
+server:
+  port:
+    8081
