@@ -3,7 +3,7 @@ logging:
     org:
       springframework: OFF
     maersk:
-      com: DEBUG
+      com: INFO
 spring:
   main:
     banner-mode: CONSOLE
@@ -28,8 +28,7 @@ ibm:
     keepMetricsWhenQueueManagerIsDown: false
 #    clearMetrics: 5
     event:
-      delayInMilliSeconds: 10000
-      waitInterval: 5000          
+      delayInMilliSeconds: 10000          
       queuemanager:
          queue: SYSTEM.ADMIN.QMGR.EVENT
       channel:
@@ -39,7 +38,7 @@ ibm:
       cpu:
          queue: CPU_SUMMARY
     json:
-      sort: false
+      sort: true
       order: ascending
     objects:
       queues:

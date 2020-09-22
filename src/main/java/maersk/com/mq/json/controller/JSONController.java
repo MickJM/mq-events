@@ -1,5 +1,13 @@
 package maersk.com.mq.json.controller;
 
+/*
+ * Copyright 2020
+ * Maersk
+ *
+ * Show the metrics in JSON format - for all those apps that dont understand Prometheus
+ * 
+ */
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,9 +36,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.Meter.Id;
-import maersk.com.mq.events.MQMetricsQueueManager;
-import maersk.com.mq.events.MQMonitorBase;
-import maersk.com.mq.events.MQPCFConstants;
 import maersk.com.mq.json.entities.*;
 
 @RestController
@@ -43,28 +48,25 @@ public class JSONController  {
 	@Autowired
 	public MeterRegistry meterRegistry;
 
-	//@Autowired
-	//private MQMonitorBase base;
-	
 	@Value("${ibm.mq.json.sort:false}")	
 	private boolean sort;
-	public boolean getSort() {
+	public boolean Sort() {
 		return this.sort;
 	}
 	
 	@Value("${ibm.mq.json.order:ascending}")	
 	private String order;
-	public void setOrder(String v) {
+	public void Order(String v) {
 		this.order = v;
 	}
-	public String getOrder() {
+	public String Order() {
 		return this.order;
 	}
 	
 	/*
 	 * URI for ALL metrics
 	 */
-	@RequestMapping(method=RequestMethod.GET, value="/getallmetrics", produces={"application/json"})
+	@RequestMapping(method=RequestMethod.GET, value="/allmetrics", produces={"application/json"})
 	public ResponseEntity<Object> allmetrics() {
 
 		log.debug("REST JSON API invoked");
@@ -102,7 +104,7 @@ public class JSONController  {
 	/*
 	 * URI for mq metrics
 	 */
-	@RequestMapping(method=RequestMethod.GET, value="/getmqmetrics", produces={"application/json"})
+	@RequestMapping(method=RequestMethod.GET, value="/mqmetrics", produces={"application/json"})
 	public ResponseEntity<Object> mqmetrics() {
 
 		log.debug("REST MQ JSON API invoked");
@@ -124,15 +126,15 @@ public class JSONController  {
 		/*
 		 * Sort, if we have require it
 		 */
-		if (this.sort) {
-			if (getOrder().isEmpty() || getOrder() == null) {
-				setOrder("ascending");
+		if (Sort()) {
+			if (Order().isEmpty() || Order() == null) {
+				Order("ascending");
 			}
 			Comparator<Meter.Id> byType = (Id a, Id b) -> (a.getName().compareTo(b.getName()));
-			if (getOrder().equals("ascending")) {
+			if (Order().equals("ascending")) {
 				Collections.sort(filter, byType);
 			}
-			if (getOrder().equals("descending")) {
+			if (Order().equals("descending")) {
 				Collections.sort(filter, byType.reversed());
 			}
 		}
@@ -147,8 +149,8 @@ public class JSONController  {
 			if (tags != null) {
 				m.tags = tags;
 			}
-	
 			checkType(metrics, id, m, tags);
+			
 		}
 		
 		mt.setValue(metrics);

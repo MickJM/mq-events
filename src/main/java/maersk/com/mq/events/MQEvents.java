@@ -10,12 +10,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan("maersk.com.mq.channelevents")
 @ComponentScan("maersk.com.mq.queuemanagerevents")
 @ComponentScan("maersk.com.mq.configevents")
+@ComponentScan("maersk.com.mq.cpuevents")
 @SpringBootApplication
 @EnableScheduling
-public class MQMetricsApplication {
+public class MQEvents {
 
 	public static void main(String[] args) {
-		SpringApplication sa = new SpringApplication(MQMetricsApplication.class);
+		SpringApplication sa = new SpringApplication(MQEvents.class);
 		sa.run(args);
 		
 	}

@@ -24,7 +24,7 @@ ibm:
     sslCipherSpec1: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
     useSSL: false
     user: MQmon01
-    password: Passw0rdPassw0rd1234
+    password: Passw0rd
     local: false
     keepMetricsWhenQueueManagerIsDown: false
     clearMetrics: 5

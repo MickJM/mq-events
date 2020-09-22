@@ -1,5 +1,15 @@
 package maersk.com.mq.events;
 
+/*
+ * Copyright 2020
+ * Maersk
+ *
+ * https://community.ibm.com/community/user/imwuc/viewdocument/a-first-look-at-mq-resource-usage-s?CommunityKey=183ec850-4947-49c8-9a2e-8e7c7fc46c64&tab=librarydocuments
+ *
+ * Queue Manager obkect
+ *  
+ */
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,6 +57,7 @@ import com.ibm.mq.headers.pcf.PCFMessageAgent;
 import com.ibm.mq.headers.pcf.PCFParameter;
 
 import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import maersk.com.mq.metrics.accounting.AccountingEntity;
 
@@ -55,114 +66,135 @@ public class MQMetricsQueueManager {
 
 	private final static Logger log = LoggerFactory.getLogger(MQMetricsQueueManager.class);
 				
-	private boolean onceOnly = true;
-	public void setOnceOnly(boolean v) {
-		this.onceOnly = v;
+	private boolean onceonly = true;
+	public void OnceOnly(boolean v) {
+		this.onceonly = v;
 	}
-	public boolean getOnceOnly() {
-		return this.onceOnly;
+	public boolean OnceOnly() {
+		return this.onceonly;
 	}
 	
 	// taken from connName
-	private String hostName;
-	public void setHostName(String v) {
-		this.hostName = v;
+	private String hostname;
+	public void HostName(String v) {
+		this.hostname = v;
 	}
-	public String getHostName() { return this.hostName; }
+	public String HostName() { return this.hostname; }
 	
 	@Value("${ibm.mq.queueManager}")
-	private String queueManager;
-	public void setQueueManager(String v) {
-		this.queueManager = v;
+	private String queuemanagername;
+	public void QueueManagerName(String v) {
+		this.queuemanagername = v;
 	}
-	public String getQueueManagerName() { return this.queueManager; }
+	public String QueueManagerName() { return this.queuemanagername; }
 	
 	// hostname(port)
 	@Value("${ibm.mq.connName}")
-	private String connName;
-	public void setConnName(String v) {
-		this.connName = v;
+	private String connectionname;
+	public void ConnectionName(String v) {
+		this.connectionname = v;
 	}
-	public String getConnName() { return this.connName; }
+	public String ConnectionName() { return this.connectionname; }
 	
 	@Value("${ibm.mq.channel}")
 	private String channel;
-	public void setChannelName(String v) {
+	public void ChannelName(String v) {
 		this.channel = v;
 	}
-	public String getChannelName() { return this.channel; }
+	public String ChannelName() { return this.channel; }
 
 	// taken from connName
 	private int port;
-	public void setPort(int v) {
+	public void Port(int v) {
 		this.port = v;
 	}
-	public int getPort() { return this.port; }
+	public int Port() { return this.port; }
 
 	@Value("${ibm.mq.user:#{null}}")
-	private String userId;
-	public void setUserId(String v) {
-		this.userId = v;
+	private String userid;
+	public void UserId(String v) {
+		this.userid = v;
 	}
-	public String getUserId() { return this.userId; }
+	public String UserId() { return this.userid; }
 
 	@Value("${ibm.mq.password:#{null}}")
 	private String password;
-	public void setPassword(String v) {
+	public void Password(String v) {
 		this.password = v;
 	}
-	public String getPassword() { return this.password; }
+	public String Password() { return this.password; }
 
 	// MQ Connection Security Parameter
-	@Value("${ibm.mq.authenricateUsingCSP:true}")
-	private boolean authCSP;
+	@Value("${ibm.mq.authenticateUsingCSP:true}")
+	private boolean authcsp;
 	public boolean getMQCSP() {
-		return this.authCSP;
+		return this.authcsp;
 	}
 	
-	@Value("${ibm.mq.sslCipherSpec}")
-	private String cipher;
-	
 	@Value("${ibm.mq.useSSL:false}")
-	private boolean bUseSSL;
-	public boolean usingSSL() {
-		return this.bUseSSL;
+	private boolean usessl;
+	public boolean UsingSSL() {
+		return this.usessl;
 	}
 	
 	@Value("${ibm.mq.security.truststore:}")
 	private String truststore;
+	public String TrustStore() {
+		return this.truststore;
+	}
 	@Value("${ibm.mq.security.truststore-password:}")
 	private String truststorepass;
+	public String TrustStorePass() {
+		return this.truststorepass;
+	}
 	@Value("${ibm.mq.security.keystore:}")
 	private String keystore;
+	public String KeyStore() {
+		return this.keystore;
+	}
 	@Value("${ibm.mq.security.keystore-password:}")
 	private String keystorepass;
+	public String KeyStorePass() {
+		return this.keystorepass;
+	}
 	
+	@Value("${ibm.mq.sslCipherSpec}")
+	private String cipher;
+	public String Cipher() {
+		return this.cipher;
+	}
+
+	@Value("${ibm.mq.security.ibmcipher:false}")
+	private String ibmcipher;
+	public String IBMCipher() {
+		return this.ibmcipher;
+	}
+
 	@Value("${ibm.mq.multiInstance:false}")
-	private boolean multiInstance;
-	public boolean isMultiInstance() {
-		return this.multiInstance;
+	private boolean multiinstance;
+	public boolean MultiInstance() {
+		return this.multiinstance;
 	}
 	
 	@Value("${ibm.mq.ccdtFile:#{null}}")
-	private String ccdtFile;
-	public String getCCDTFile() {
-		return this.ccdtFile;
+	private String ccsdfile;
+	public String CCDTFile() {
+		return this.ccsdfile;
 	}	
 	
 	@Value("${ibm.mq.local:false}")
 	private boolean local;
-	public boolean isRunningLocal() {
+	public boolean RunningLocal() {
 		return this.local;
 	}
 			
 	@Value("${ibm.mq.pcf.browse:false}")
-	private boolean pcfBrowse;	
-	public boolean getBrowse() {
-		return this.pcfBrowse;
+	private boolean browse;	
+	public boolean Browse() {
+		return this.browse;
 	}
-	public void setBrowse(boolean v) {
-		this.pcfBrowse = v;
+	public void Browse(boolean v) {
+		this.browse = v;
 	}
 	
 	@Value("${info.app.version:}")
@@ -177,13 +209,13 @@ public class MQMetricsQueueManager {
 		return this.appName;
 	}
 	
-	private int statType;
-	private void setStatType(int v) {
-		this.statType = v;
-	}
-	private int getStatType() {
-		return this.statType;
-	}
+	//private int stattype;
+	//private void StateType(int v) {
+	//	this.stattype = v;
+	//}
+	//private int StatType() {
+	//	return this.stattype;
+	//}
 	
 	/*
      *  MAP details for the metrics
@@ -197,62 +229,62 @@ public class MQMetricsQueueManager {
 	/*
 	 * Validate connection name and userID
 	 */
-	private boolean validConnectionName() {
-		return (getConnName().equals(""));
+	private boolean ValidConnectionName() {
+		return (ConnectionName().equals(""));
 	}
-	private boolean validateUserId() {
-		return (getUserId().equals(""));		
+	private boolean ValidateUserId() {
+		return (UserId().equals(""));		
 	}
-	private boolean validateUserId(String v) {
+	private boolean ValidateUserId(String v) {
 		boolean ret = false;
-		if (getUserId().equals(v)) {
+		if (UserId().equals(v)) {
 			ret = true;
 		}
 		return ret;
 	}
 	
     private MQQueueManager queManager;
-    public void setQmgr(MQQueueManager qm) {
+    public void QueueManager(MQQueueManager qm) {
     	this.queManager = qm;
     }
-    public MQQueueManager getQmgr() {
+    public MQQueueManager QueueManager() {
     	return this.queManager;
     }
 
     private MQQueue queue = null;
-    public void setQueue(MQQueue q) {
+    public void Queue(MQQueue q) {
     	this.queue = q;
     }
-    public MQQueue getQueue() {
+    public MQQueue Queue() {
     	return this.queue;
     }
     
     private MQGetMessageOptions gmo = null;
-    public void setGMO(MQGetMessageOptions gmo) {
+    public void GetMessageOptions(MQGetMessageOptions gmo) {
     	this.gmo = gmo;
     }
-    public MQGetMessageOptions getGMO() {
+    public MQGetMessageOptions GetMessageOptions() {
     	return this.gmo;
     }
     
 	private int qmgrAccounting;
-	public synchronized void setAccounting(int v) {		
+	public synchronized void Accounting(int v) {		
 		this.qmgrAccounting = v;
 	}
-	public synchronized int getAccounting() {		
+	public synchronized int Accounting() {		
 		return this.qmgrAccounting;
 	}
 	private int stats;
-	public synchronized void setQueueManagerStatistics(int v) {
+	public synchronized void QueueManagerStatistics(int v) {
 		this.stats = v;
 	}
-	public synchronized int getQueueManagerStatistics() {
+	public synchronized int QueueManagerStatistics() {
 		return this.stats;
 	}
 
-    @Autowired
-    private MQMonitorBase base;
-    
+	@Autowired
+	private MeterRegistry meterRegistry;
+
     @Autowired
     Environment env;
 
@@ -263,9 +295,9 @@ public class MQMetricsQueueManager {
 	}
 	
 	@PostConstruct
-	public void init() {
-		setRunMode();
-		setVersion();
+	public void Init() {
+		RunMode();
+		Version();
 		
 	}
 		
@@ -273,20 +305,19 @@ public class MQMetricsQueueManager {
 	 * Create an MQQueueManager object
 	 */
 	@SuppressWarnings("rawtypes")
-	//@Bean("queueManagerObject")
-	public MQQueueManager createQueueManager() throws MQException, MQDataException, MalformedURLException {
-		
+	public MQQueueManager CreateQueueManager() throws MQException, MQDataException, MalformedURLException {
+
 		Hashtable<String, Comparable> env = new Hashtable<String, Comparable>();
 		
-		if (!isRunningLocal()) { 
+		if (!RunningLocal()) { 
 			
-			getEnvironmentVariables();
+			SetEnvironmentVariables();
 			log.info("Attempting to connect using a client connection");
 
-			if ((getCCDTFile() == null) || (getCCDTFile().isEmpty())) {
-				env.put(MQConstants.HOST_NAME_PROPERTY, getHostName());
-				env.put(MQConstants.CHANNEL_PROPERTY, getChannelName());
-				env.put(MQConstants.PORT_PROPERTY, getPort());
+			if ((CCDTFile() == null) || (CCDTFile().isEmpty())) {
+				env.put(MQConstants.HOST_NAME_PROPERTY, HostName());
+				env.put(MQConstants.CHANNEL_PROPERTY, ChannelName());
+				env.put(MQConstants.PORT_PROPERTY, Port());
 			}
 			
 			/*
@@ -297,62 +328,62 @@ public class MQMetricsQueueManager {
 			 * ...... then the connection is used like OPTIONAL
 			 */		
 		
-			if (!StringUtils.isEmpty(getUserId())) {
-				env.put(MQConstants.USER_ID_PROPERTY, getUserId()); 
-				if (!StringUtils.isEmpty(getPassword())) {
-					env.put(MQConstants.PASSWORD_PROPERTY, getPassword());
+			if (!StringUtils.isEmpty(UserId())) {
+				env.put(MQConstants.USER_ID_PROPERTY, UserId()); 
+				if (!StringUtils.isEmpty(Password())) {
+					env.put(MQConstants.PASSWORD_PROPERTY, Password());
 				}
 			}
 			env.put(MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY, getMQCSP());
 			env.put(MQConstants.TRANSPORT_PROPERTY,MQConstants.TRANSPORT_MQSERIES);
 			env.put(MQConstants.APPNAME_PROPERTY,getAppName());
 			
-			if (isMultiInstance()) {
-				if (getOnceOnly()) {
+			if (MultiInstance()) {
+				if (OnceOnly()) {
+					OnceOnly(false);
 					log.info("MQ Metrics is running in multiInstance mode");
 				}
 			}
 			
-			log.debug("Host		: " + getHostName());
-			log.debug("Channel	: " + getChannelName());
-			log.debug("Port		: " + getPort());
-			log.debug("Queue Man	: " + getQueueManagerName());
-			log.debug("User		: " + getUserId());
-			log.debug("Password	: **********");
-			if (usingSSL()) {
+			log.debug("Host     : {} ", HostName());
+			log.debug("Channel  : {} ", ChannelName());
+			log.debug("Port     : {} ", Port());
+			log.debug("Queue Man: {} ", QueueManagerName());
+			log.debug("User     : {} ", UserId());
+			log.debug("Password : {} ", "*******");
+			if (UsingSSL()) {
 				log.debug("SSL is enabled ....");
 			}
 			
 			// If SSL is enabled (default)
-			if (usingSSL()) {
-				if (!StringUtils.isEmpty(this.truststore)) {
-					System.setProperty("javax.net.ssl.trustStore", this.truststore);
-			        System.setProperty("javax.net.ssl.trustStorePassword", this.truststorepass);
+			if (UsingSSL()) {
+				if (!StringUtils.isEmpty(TrustStore())) {
+					System.setProperty("javax.net.ssl.trustStore", TrustStore());
+			        System.setProperty("javax.net.ssl.trustStorePassword", TrustStorePass());
 			        System.setProperty("javax.net.ssl.trustStoreType","JKS");
-			        System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings","false");
+			        System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings",IBMCipher());
 				}
-				if (!StringUtils.isEmpty(this.keystore)) {
-			        System.setProperty("javax.net.ssl.keyStore", this.keystore);
-			        System.setProperty("javax.net.ssl.keyStorePassword", this.keystorepass);
+				if (!StringUtils.isEmpty(KeyStore())) {
+			        System.setProperty("javax.net.ssl.keyStore", KeyStore());
+			        System.setProperty("javax.net.ssl.keyStorePassword", KeyStorePass());
 			        System.setProperty("javax.net.ssl.keyStoreType","JKS");
 				}
-				if (!StringUtils.isEmpty(this.cipher)) {
-					env.put(MQConstants.SSL_CIPHER_SUITE_PROPERTY, this.cipher);
+				if (!StringUtils.isEmpty(Cipher())) {
+					env.put(MQConstants.SSL_CIPHER_SUITE_PROPERTY, Cipher());
 				}
 			
 			} else {
 				log.debug("SSL is NOT enabled ....");
 			}
 			
-	        //System.setProperty("javax.net.debug","all");
-			if (!StringUtils.isEmpty(this.truststore)) {
-				log.debug("TrustStore       : " + this.truststore);
-				log.debug("TrustStore Pass  : ********");
+			if (!StringUtils.isEmpty(TrustStore())) {
+				log.debug("TrustStore       : {} " ,TrustStore());
+				log.debug("TrustStore Pass  : {} ", "********");
 			}
-			if (!StringUtils.isEmpty(this.keystore)) {
-				log.debug("KeyStore         : " + this.keystore);
-				log.debug("KeyStore Pass    : ********");
-				log.debug("Cipher Suite     : " + this.cipher);
+			if (!StringUtils.isEmpty(KeyStore())) {
+				log.debug("KeyStore         : {} " ,KeyStore());
+				log.debug("KeyStore Pass    : {} " , "********");
+				log.debug("Cipher Suite     : {} " ,Cipher());
 			}
 		} else {
 			log.debug("Attemping to connect using local bindings");
@@ -364,25 +395,23 @@ public class MQMetricsQueueManager {
 		 * ... client connection: application connection in client mode 
 		 */
 		MQQueueManager qmgr = null;
-		if (isRunningLocal()) {
-			log.info("Attemping to connect to queue manager " + getQueueManagerName() + " using local bindings");
-			qmgr = new MQQueueManager(getQueueManagerName());
+		if (RunningLocal()) {
+			log.info("Attemping to connect to queue manager {} using local bindings", QueueManagerName());
+			qmgr = new MQQueueManager(QueueManagerName());
 			
 		} else {
-			if ((getCCDTFile() == null) || (getCCDTFile().isEmpty())) {
-				log.info("Attempting to connect to queue manager " + getQueueManagerName());
-				qmgr = new MQQueueManager(getQueueManagerName(), env);
+			if ((CCDTFile() == null) || (CCDTFile().isEmpty())) {
+				log.info("Attempting to connect to queue manager {} client connection" ,QueueManagerName());
+				qmgr = new MQQueueManager(QueueManagerName(), env);
 				
 			} else {
-				URL ccdtFileName = new URL("file:///" + getCCDTFile());
-				log.info("Attempting to connect to queue manager " + getQueueManagerName() + " using CCDT file");
-				qmgr = new MQQueueManager(this.queueManager, env, ccdtFileName);
+				URL ccdtFileName = new URL("file:///" + CCDTFile());
+				log.info("Attempting to connect to queue manager {} using CCDT file", QueueManagerName());
+				qmgr = new MQQueueManager(this.queuemanagername, env, ccdtFileName);
 				
 			}
 		}
-		log.info("Connection to queue manager established ");
-		//setQmgr(qmgr);
-		
+		log.info("Connection to queue manager established ");		
 		return qmgr;
 	}
 	
@@ -402,7 +431,7 @@ public class MQMetricsQueueManager {
 	/*
 	 * Get MQ details from environment variables
 	 */
-	private void getEnvironmentVariables() {
+	private void SetEnvironmentVariables() {
 		
 		/*
 		 * ALL parameter are passed in the application.yaml file ...
@@ -411,51 +440,51 @@ public class MQMetricsQueueManager {
 		 */
 		
 		// Split the host and port number from the connName ... host(port)
-		if (!validConnectionName()) {
+		if (!ValidConnectionName()) {
 			Pattern pattern = Pattern.compile("^([^()]*)\\(([^()]*)\\)(.*)$");
-			Matcher matcher = pattern.matcher(this.connName);	
+			Matcher matcher = pattern.matcher(this.connectionname);	
 			if (matcher.matches()) {
-				this.hostName = matcher.group(1).trim();
+				this.hostname = matcher.group(1).trim();
 				this.port = Integer.parseInt(matcher.group(2).trim());
 			
 			} else {
 				log.error("While attempting to connect to a queue manager, the connName is invalid ");
-				System.exit(MQPCFConstants.EXIT_ERROR);				
+				System.exit(IMQPCFConstants.EXIT_ERROR);				
 			
 			}
 			
 		} else {
 			log.error("While attempting to connect to a queue manager, the connName is missing  ");
-			System.exit(MQPCFConstants.EXIT_ERROR);
+			System.exit(IMQPCFConstants.EXIT_ERROR);
 			
 		}
 
 		/*
 		 * If we dont have a user or a certs are not being used, then we cant connect ... unless we are in local bindings
 		 */
-		if (validateUserId()) {
-			if (!usingSSL()) {
+		if (ValidateUserId()) {
+			if (!UsingSSL()) {
 				log.error("Unable to connect to queue manager, credentials are missing and certificates are not being used");
-				System.exit(MQPCFConstants.EXIT_ERROR);
+				System.exit(IMQPCFConstants.EXIT_ERROR);
 			}
 		}
 
 		// if no user, forget it ...
-		if (this.userId == null) {
+		if (UserId() == null) {
 			return;
 		}
 
 		/*
 		 * dont allow mqm user
 		 */
-		if (!validateUserId()) {
-			if ((validateUserId("mqm") || (validateUserId("MQM")))) {
+		if (!ValidateUserId()) {
+			if ((ValidateUserId("mqm") || (ValidateUserId("MQM")))) {
 				log.error("The MQ channel USERID must not be running as 'mqm' ");
-				System.exit(MQPCFConstants.EXIT_ERROR);
+				System.exit(IMQPCFConstants.EXIT_ERROR);
 			}
 		} else {
-			this.userId = null;
-			this.password = null;
+			UserId(null);
+			Password(null);
 		}
 	}
 	
@@ -463,27 +492,42 @@ public class MQMetricsQueueManager {
 	 * Set 'runmode'
 	 *    LOCAL or CLIENT
 	 */
-	private void setRunMode() {
+	private void RunMode() {
 
-		int mode = MQPCFConstants.MODE_LOCAL;
-		if (!isRunningLocal()) {
-			mode = MQPCFConstants.MODE_CLIENT;
+		int mode = IMQPCFConstants.MODE_LOCAL;
+		if (!RunningLocal()) {
+			mode = IMQPCFConstants.MODE_CLIENT;
 		}
 		
-		runModeMap.put(runMode, base.meterRegistry.gauge(runMode, 
-				Tags.of("queueManagerName", getQueueManagerName()),
+		runModeMap.put(runMode, meterRegistry.gauge(runMode, 
+				Tags.of("queueManagerName", QueueManagerName()),
 				new AtomicInteger(mode)));
 	}
 
 	/*
 	 * Parse the version
 	 */
-	private void setVersion() {
+	private void Version() {
 
 		String s = getVersionNumeric().replaceAll("[\\s.]", "");
 		int v = Integer.parseInt(s);		
-		versionMap.put(version, base.meterRegistry.gauge(version, 
+		versionMap.put(version, meterRegistry.gauge(version, 
 				new AtomicInteger(v)));		
+	}
+
+	/*
+	 * Close the connection to the queue
+	 */
+	public void CloseQueue(MQQueue queue) {
+		
+    	try {
+    		log.debug("Closing Queue Connection ");
+			queue.close();
+			
+    	} catch (Exception e) {
+    		// do nothing
+    	}
+    	
 	}
 	
 	

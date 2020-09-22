@@ -1,4 +1,3 @@
-MQ Events
-----------
-
-Maersk MQ Monitoring Metrics
+MQ-Events
+                                                                                                                   
+Maersk MQ Monitoring Events

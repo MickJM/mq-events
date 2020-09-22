@@ -1,6 +1,6 @@
 package maersk.com.mq.events;
 
-public interface MQPCFConstants {
+public interface IMQPCFConstants {
 
 		public int BASE = 0;
 		public int PCF_INIT_VALUE = 0;
@@ -20,6 +20,7 @@ public interface MQPCFConstants {
 		
 		public int NOT_CONNECTED_TO_QM = 0;
 		public int CONNECTED_TO_QM = 1;
+		
 		/*
 		 * For running tasks
 		 */
@@ -28,4 +29,12 @@ public interface MQPCFConstants {
 		public int TASK_STOPPING = 3;
 		public int TASK_STOPPED = 4;
 
+		public int SEQ_FIRST = 1;
+		public int SEQ_SECOND = 2;
+
+		public String QE_BEFORE = "BEFORE";
+		public String QE_AFTER = "AFTER";
+
+		public int OKAY = 0;
+		public int RET_WITH_ERROR = 20;
 }
