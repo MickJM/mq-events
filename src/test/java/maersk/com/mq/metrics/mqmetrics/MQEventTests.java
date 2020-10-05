@@ -63,23 +63,20 @@ public class MQEventTests {
 	
 	@Value("${ibm.mq.queueManager}")
 	private String queueManager;
-	public void setQueueManager(String v) {
+	public void QueueManager(String v) {
 		this.queueManager = v;
 	}
-	public String getQueueManagerName() { return this.queueManager; }
+	public String QueueManagerName() { return this.queueManager; }
 	
 
 	@Test
 	@Order(1)
 	public void findGaugeMetrics() throws MQDataException, ParseException, InterruptedException {
 		
-		log.info("Attempting to connect to {}", getQueueManagerName());		
+		log.info("Attempting to connect to {}", QueueManagerName());		
 		Thread.sleep(2000);
 
 		assert (conn != null) : "MQ connection object has not been created";
-
-		//MQQueueManager qm = conn.getMQQueueManager();
-		//log.info("Return code: " + conn.getReasonCode());
 
 		assert (conn.QueueManagerEventsObject() != null) : "Queue Manager Event object not created successfully";
 		assert (conn.ChannelEventsObject() != null) : "Channel Event object not created successfully";
@@ -88,53 +85,4 @@ public class MQEventTests {
 				
 	}
 	
-	//@Test
-	//@Order(2)
-	//public void testConnectionToTheQueueManager() {
-
-		/*
-		log.info("Queue manager connection");
-		String mess = "";
-		
-		try {
-			
-			mess = "Queue manager";
-			MQQueueManager qm = getQueMan().createQueueManager();
-			assert (qm) != null;
-			
-		} catch (Exception e) {
-			log.info("Error: " + mess);
-			e.printStackTrace();
-			
-		}
-		*/
-	//}
-
-	
-	//@Test
-	//@Order(3)
-	//public void createPCFMessageAgent() {
-
-	//	log.info("Queue manager connection");
-	//	String mess = "";
-		/*
-		try {
-			
-			mess = "Queue manager";
-			MQQueueManager qm = getQueMan().createQueueManager();
-			assert (qm) != null;
-
-			mess = "PCF Agent";
-			PCFMessageAgent ag = getQueMan().createMessageAgent(qm);
-			assert (ag) != null;
-			
-			int qmgrAcct = getQueMan().getAccounting();
-			
-		} catch (Exception e) {
-			log.info("Error: " + mess);
-			e.printStackTrace();
-			
-		}
-		*/
-	//}
 }

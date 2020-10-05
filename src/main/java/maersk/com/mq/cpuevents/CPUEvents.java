@@ -68,7 +68,6 @@ public class CPUEvents implements Callable<Integer>, IEvents, IMQPCFConstants {
     	return this.metricsqueuemanager;
     }
 	
-    //@Autowired
     private MQQueueManager queManager;
     public void QueueManager(MQQueueManager qm) {
     	this.queManager = qm;
